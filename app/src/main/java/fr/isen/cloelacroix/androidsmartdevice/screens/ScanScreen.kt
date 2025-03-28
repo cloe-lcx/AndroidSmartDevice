@@ -20,6 +20,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import fr.isen.cloelacroix.androidsmartdevice.BleDevice
@@ -28,11 +29,11 @@ import fr.isen.cloelacroix.androidsmartdevice.BleDeviceItem
 @Composable
 fun ScanScreen(
     onScanClick: () -> Unit,
-    onStopScanClick: () -> Unit,  // Ajouter une fonction pour arrêter le scan manuellement
+    onStopScanClick: () -> Unit,
     scanResults: List<BleDevice>,
     isScanning: Boolean,
     progress: Float,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
 ) {
     Column(
         modifier = modifier.fillMaxSize(),
@@ -40,16 +41,17 @@ fun ScanScreen(
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
 
-        // Titre de l'écran
         Text(
             text = "AndroidSmartDevice",
             fontSize = 24.sp,
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(16.dp)
+                .padding(36.dp),
+            color = Color(0xFFE61F93),
+            textAlign = TextAlign.Center
+
         )
 
-        // Bouton pour lancer/arrêter le scan
         Row(
             modifier = Modifier
                 .fillMaxWidth()
@@ -58,14 +60,13 @@ fun ScanScreen(
             verticalAlignment = Alignment.CenterVertically
         ) {
             if (isScanning) {
-                Text(text = "Scan BLE en cours", modifier = Modifier.padding(end = 8.dp), fontSize = 22.sp)
+                Text(text = "Scan BLE en cours", modifier = Modifier.padding(end = 8.dp), fontSize = 22.sp, color = Color(0xFFE61F93))
 
-                // Bouton pour arrêter le scan manuellement
                 IconButton(onClick = { onStopScanClick() }) {
                     Icon(imageVector = Icons.Filled.Close, contentDescription = "Stop", tint = Color.Red, modifier = Modifier.size(32.dp))
                 }
             } else {
-                Text(text = "Lancer le Scan BLE", modifier = Modifier.padding(end = 8.dp), fontSize = 22.sp)
+                Text(text = "Lancer le Scan BLE", modifier = Modifier.padding(end = 8.dp), fontSize = 22.sp, color = Color(0xFFE61F93))
 
                 IconButton(onClick = { onScanClick() }) {
                     Icon(imageVector = Icons.Filled.PlayArrow, contentDescription = "Start", tint = Color.Green, modifier = Modifier.size(32.dp))
@@ -73,17 +74,16 @@ fun ScanScreen(
             }
         }
 
-        // Barre de progression pendant le scan
         if (isScanning) {
             LinearProgressIndicator(
                 progress = progress,
                 modifier = Modifier
                     .fillMaxWidth()
-                    .padding(16.dp)
+                    .padding(16.dp),
+                color = Color(0xFFE61F93)
             )
         }
 
-        // Liste des appareils trouvés
         LazyColumn(
             modifier = Modifier
                 .fillMaxWidth()

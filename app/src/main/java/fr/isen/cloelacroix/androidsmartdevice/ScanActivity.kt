@@ -19,16 +19,11 @@ import androidx.activity.enableEdgeToEdge
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
-import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.items
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.PlayArrow
-import androidx.compose.material.icons.filled.Close
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
@@ -36,7 +31,6 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.core.content.ContextCompat
 import fr.isen.cloelacroix.androidsmartdevice.screens.ScanScreen
-import fr.isen.cloelacroix.androidsmartdevice.DeviceActivity
 import fr.isen.cloelacroix.androidsmartdevice.ui.theme.AndroidSmartDeviceTheme
 
 class ScanActivity : ComponentActivity() {
@@ -82,7 +76,7 @@ class ScanActivity : ComponentActivity() {
                             checkBluetoothAndLocationAndStartScan()
                         },
                         onStopScanClick = {
-                            stopScan() // Arrêter le scan manuellement
+                            stopScan()
                         },
                         scanResults = scanResults,
                         isScanning = isScanning,
@@ -159,7 +153,7 @@ class ScanActivity : ComponentActivity() {
         }
     }
 
-    private val scanTimeout: Long = 30000 // Durée maximale du scan en millisecondes (10 secondes)
+    private val scanTimeout: Long = 30000
     private var scanHandler: Handler? = null
 
     private fun startScan() {
@@ -168,7 +162,6 @@ class ScanActivity : ComponentActivity() {
         scanResults.clear()
         bluetoothLeScanner?.startScan(scanCallback)
 
-        // Arrêter le scan après un délai de `scanTimeout`
         scanHandler = Handler()
         scanHandler?.postDelayed({
             stopScan()
@@ -199,11 +192,9 @@ class ScanActivity : ComponentActivity() {
             val rssi = result.rssi
             val name = device.name ?: "Device Unknown"
 
-            // Filtrer les périphériques sans nom
             if (name != "Device Unknown") {
                 val macAddress = device.address
 
-                // Ajouter seulement si l'appareil n'est pas déjà dans la liste
                 val bleDevice = BleDevice(name, macAddress, rssi)
                 if (scanResults.find { it.macAddress == macAddress } == null) {
                     scanResults.add(bleDevice)
@@ -240,7 +231,7 @@ fun BleDeviceItem(device: BleDevice) {
     ) {
         Column(modifier = Modifier.padding(16.dp)) {
             Row(verticalAlignment = Alignment.CenterVertically) {
-                Text(text = "${device.rssi}", fontWeight = FontWeight.Bold, fontSize = 20.sp, color = Color.Blue)
+                Text(text = "${device.rssi}", fontWeight = FontWeight.Bold, fontSize = 20.sp, color = Color(0xFFE61F93))
 
                 Spacer(modifier = Modifier.width(8.dp))
 
