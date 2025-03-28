@@ -5,7 +5,6 @@ import android.bluetooth.BluetoothAdapter
 import android.bluetooth.le.BluetoothLeScanner
 import android.bluetooth.le.ScanCallback
 import android.bluetooth.le.ScanResult
-import android.content.Context
 import android.content.Intent
 import android.content.pm.PackageManager
 import android.location.LocationManager
@@ -18,6 +17,7 @@ import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
 import androidx.activity.result.contract.ActivityResultContracts
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
@@ -35,6 +35,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.core.content.ContextCompat
+import fr.isen.cloelacroix.androidsmartdevice.DeviceActivity
 import fr.isen.cloelacroix.androidsmartdevice.ui.theme.AndroidSmartDeviceTheme
 
 class ScanActivity : ComponentActivity() {
@@ -157,7 +158,7 @@ class ScanActivity : ComponentActivity() {
         }
     }
 
-    private val scanTimeout: Long = 20000 // Durée maximale du scan en millisecondes (10 secondes)
+    private val scanTimeout: Long = 30000 // Durée maximale du scan en millisecondes (10 secondes)
     private var scanHandler: Handler? = null
 
     private fun startScan() {
@@ -183,11 +184,11 @@ class ScanActivity : ComponentActivity() {
 
     private fun simulateProgress() {
         val handler = Handler()
-        for (i in 1..200) {
+        for (i in 1..300) {
             handler.postDelayed({
-                progress = i / 200f
-                if (i == 200) stopScan()
-            }, (i * 200).toLong())
+                progress = i / 300f
+                if (i == 300) stopScan()
+            }, (i * 300).toLong())
         }
     }
 
@@ -290,10 +291,20 @@ fun ScanScreen(
 
 @Composable
 fun BleDeviceItem(device: BleDevice) {
+    val context = LocalContext.current
+
     Card(
         modifier = Modifier
             .fillMaxWidth()
-            .padding(8.dp),
+            .padding(8.dp)
+            .clickable {
+                val intent = Intent(context, DeviceActivity::class.java).apply {
+                    putExtra("DEVICE_NAME", device.deviceName)
+                    putExtra("MAC_ADDRESS", device.macAddress)
+                    putExtra("rssi", device.rssi)
+                }
+                context.startActivity(intent)
+            },
         elevation = CardDefaults.cardElevation(defaultElevation = 4.dp)
     ) {
         Column(modifier = Modifier.padding(16.dp)) {
@@ -310,6 +321,7 @@ fun BleDeviceItem(device: BleDevice) {
         }
     }
 }
+
 
 data class BleDevice(val deviceName: String, val macAddress: String, val rssi: Int)
 
